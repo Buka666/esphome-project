@@ -1,0 +1,19 @@
+packages:
+  api: !include common/api.yaml
+  ota: !include common/ota.yaml
+  wifi: !include common/wifi.yaml
+
+esphome:
+  name: esp32c3-device2
+
+# Пример сенсоров для второго устройства
+sensor:
+  - platform: internal_temperature
+    name: "Device2 Internal Temperature"
+
+binary_sensor:
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: INPUT_PULLUP
+    name: "Device2 Button"
