@@ -1,3 +1,4 @@
+secrets.yaml
 .pio/
 __pycache__/
 *.bin
