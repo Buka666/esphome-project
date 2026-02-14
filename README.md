@@ -51,6 +51,9 @@ ESPHome ищет `!secret` относительно **основного фай�
 
 Workflow: `.github/workflows/build.yml`.
 
+Workflow запускается на всех push в ветки и на тегах `v*`; для Pull Request запускается при изменениях в `devices/**`, `packages/**` и `.github/workflows/build.yml`.
+
+
 Перед запуском CI добавьте Secrets в репозитории (`Settings` -> `Secrets and variables` -> `Actions`):
 
 - `WIFI_SSID`
