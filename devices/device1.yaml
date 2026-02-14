@@ -1,0 +1,88 @@
+substitutions:
+  device_name: esp32c3-supermini-1
+  friendly_name: ESP32C3 SuperMini 1
+  status_led_pin: GPIO8
+  github_repo: Buka666/esphome-project
+  firmware_version: "v0.0.0"
+
+  # secrets are resolved from the main device config location
+  wifi_ssid: !secret wifi_ssid
+  wifi_password: !secret wifi_password
+  api_encryption_key: !secret api_encryption_key
+  ota_password: !secret ota_password
+
+esphome:
+  name: ${device_name}
+  friendly_name: ${friendly_name}
+  project:
+    name: buka666.esphome_project
+    version: ${firmware_version}
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+logger:
+  level: DEBUG
+
+web_server:
+  version: 3
+
+http_request:
+  verify_ssl: true
+  buffer_size_rx: 4096
+  buffer_size_tx: 1024
+  timeout: 10s
+
+packages:
+  wifi: !include ../packages/connectivity/wifi.yaml
+  api: !include ../packages/connectivity/api.yaml
+  ota: !include ../packages/connectivity/ota.yaml
+
+status_led:
+  pin:
+    number: ${status_led_pin}
+    inverted: true
+
+update:
+  - id: firmware_update
+    platform: http_request
+    name: "${friendly_name} Firmware"
+    source: https://github.com/${github_repo}/releases/latest/download/${device_name}.json
+
+button:
+  - platform: template
+    name: "${friendly_name} Check OTA Update"
+    on_press:
+      - component.update: firmware_update
+
+  - platform: template
+    name: "${friendly_name} Install OTA Update"
+    on_press:
+      - update.perform:
+          id: firmware_update
+
+sensor:
+  - platform: internal_temperature
+    name: "${friendly_name} Internal Temperature"
+
+text_sensor:
+  - platform: template
+    name: "${friendly_name} Firmware Version"
+    icon: mdi:tag
+    entity_category: diagnostic
+    lambda: |-
+      return {"${firmware_version}"};
+    update_interval: never
+
+binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
+  - platform: gpio
+    pin:
+      number: GPIO9
+      mode: INPUT_PULLUP
+      inverted: true
+    name: "${friendly_name} Button"
