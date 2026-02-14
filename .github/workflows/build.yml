@@ -114,14 +114,12 @@ jobs:
           fi
 
           for bin in "${bins[@]}"; do
-            file_name="$(basename "$bin")"
             env_name="$(basename "$(dirname "$bin")")"
-            short_name="${env_name}-${file_name}"
-            target="dist/${short_name}"
+            target="dist/${env_name}.bin"
 
             if [ -e "$target" ]; then
               suffix="$(echo -n "$bin" | sha1sum | cut -c1-8)"
-              target="dist/${env_name}-${suffix}-${file_name}"
+              target="dist/${env_name}-${suffix}.bin"
             fi
 
             cp "$bin" "$target"
@@ -141,12 +139,11 @@ jobs:
             "builds": [
               {
                 "chipFamily": "ESP32-C3",
-                "parts": [
-                  {
-                    "path": "${name}.bin",
-                    "offset": 0
-                  }
-                ]
+                "ota": {
+                  "path": "${name}.bin",
+                  "md5": "$(md5sum "$bin" | cut -d" " -f1)",
+                  "release_url": "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
+                }
               }
             ]
           }
