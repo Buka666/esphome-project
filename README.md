@@ -1,24 +1,47 @@
 # ESPHome Project
 
-Небольшой шаблон ESPHome-проекта с переиспользуемыми пакетами и отдельными конфигами устройств.
+Шаблон ESPHome-проекта для **ESP32-C3 SuperMini** с переиспользуемыми пакетами и отдельными конфигами устройств.
 
 ## Структура
 
 - `devices/` — конфигурации отдельных устройств.
 - `packages/connectivity/` — общие пакеты для Wi‑Fi, API и OTA.
 
+## Что настроено в `device1.yaml`
+
+- Плата: `ESP32-C3 SuperMini` (`esp32-c3-devkitm-1`).
+- Кнопка на `GPIO9`.
+- Индикатор статуса (`status_led`) на встроенном LED `GPIO8`.
+- Системный датчик статуса (`binary_sensor` platform `status`) для Home Assistant.
+- Веб-интерфейс ESPHome `web_server` версии 3.
+
+> Если у вашей ревизии платы другие пины, измените `status_led_pin` в блоке `substitutions`.
+
+## Secrets без проблем с путями
+
+ESPHome ищет `!secret` относительно **основного файла устройства** (`devices/device1.yaml`).
+Чтобы исключить ошибки поиска пути при компиляции:
+
+1. Скопируйте шаблон:
+   ```bash
+   cp devices/secrets.yaml.example devices/secrets.yaml
+   ```
+2. Заполните `devices/secrets.yaml` своими значениями.
+
+`devices/secrets.yaml` добавлен в `.gitignore`, чтобы реальные учетные данные не попадали в git.
+
 ## Как использовать
 
-1. Создайте файл `secrets.yaml` рядом с конфигом устройства и добавьте секреты:
+1. Убедитесь, что заполнен `devices/secrets.yaml`:
    - `wifi_ssid`
    - `wifi_password`
-   - `api_encryption_key`
+   - `api_encryption_key` (base64 ключ)
    - `ota_password`
 2. Проверьте конфиг:
    ```bash
-   esphome config devices/device1.yaml
+   python -m esphome config devices/device1.yaml
    ```
 3. Скомпилируйте прошивку:
    ```bash
-   esphome compile devices/device1.yaml
+   python -m esphome compile devices/device1.yaml
    ```

@@ -1,9 +1,17 @@
 substitutions:
-  device_name: esp32c3-device1
-  friendly_name: Device1
+  device_name: esp32c3-supermini-1
+  friendly_name: ESP32C3 SuperMini 1
+  status_led_pin: GPIO8
+
+  # secrets are resolved from the main device config location
+  wifi_ssid: !secret wifi_ssid
+  wifi_password: !secret wifi_password
+  api_encryption_key: !secret api_encryption_key
+  ota_password: !secret ota_password
 
 esphome:
   name: ${device_name}
+  friendly_name: ${friendly_name}
 
 esp32:
   board: esp32-c3-devkitm-1
@@ -13,18 +21,30 @@ esp32:
 logger:
   level: WARN
 
+web_server:
+  version: 3
+
 packages:
   wifi: !include ../packages/connectivity/wifi.yaml
   api: !include ../packages/connectivity/api.yaml
   ota: !include ../packages/connectivity/ota.yaml
+
+status_led:
+  pin:
+    number: ${status_led_pin}
+    inverted: true
 
 sensor:
   - platform: internal_temperature
     name: "${friendly_name} Internal Temperature"
 
 binary_sensor:
+  - platform: status
+    name: "${friendly_name} Status"
+
   - platform: gpio
     pin:
       number: GPIO9
       mode: INPUT_PULLUP
+      inverted: true
     name: "${friendly_name} Button"
