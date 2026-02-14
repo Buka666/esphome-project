@@ -39,7 +39,8 @@ jobs:
         run: |
           esphome compile devices/device1.yaml
           mkdir -p build
-          cp .esphome/build/*/firmware.bin build/device1.bin
+          # Копируем все бинарники (.bin) из текущей PlatformIO сборки
+          cp .esphome/build/*/.pioenvs/*/*.bin build/
           ls -la build
 
       # 6. Upload artifact (обновлено на v4)
