@@ -93,9 +93,18 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p dist
-          shopt -s nullglob
-          for bin in build/*/.pioenvs/*/firmware.bin; do
-            target="dist/$(basename "$(dirname "$bin")").bin"
+
+          mapfile -t bins < <(find build -type f \( -name "firmware.bin" -o -name "firmware*.bin" \))
+          if [ ${#bins[@]} -eq 0 ]; then
+            echo "No firmware binaries were found under build/."
+            find build -maxdepth 5 -type f | sed -n '1,200p' || true
+            exit 1
+          fi
+
+          for bin in "${bins[@]}"; do
+            rel="${bin#build/}"
+            safe_name="${rel//\//-}"
+            target="dist/${safe_name}"
             cp "$bin" "$target"
             echo "Collected $target"
           done
@@ -129,7 +138,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: esphome-firmware-${{ steps.version.outputs.version }}
-          path: dist/*
+          path: dist/**
           if-no-files-found: error
 
       - name: Publish GitHub Release
