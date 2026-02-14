@@ -2,9 +2,20 @@ name: ESPHome Build
 
 on:
   push:
-    branches: ["**"]
+    paths:
+      - "devices/**"
+      - "packages/**"
+      - ".github/workflows/build.yml"
   pull_request:
+    paths:
+      - "devices/**"
+      - "packages/**"
+      - ".github/workflows/build.yml"
   workflow_dispatch:
+
+concurrency:
+  group: esphome-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -21,6 +32,7 @@ jobs:
 
       - name: Install ESPHome
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
           pip install esphome
 
@@ -31,10 +43,12 @@ jobs:
           API_ENCRYPTION_KEY: ${{ secrets.API_ENCRYPTION_KEY }}
           OTA_PASSWORD: ${{ secrets.OTA_PASSWORD }}
         run: |
-          test -n "$WIFI_SSID"
-          test -n "$WIFI_PASSWORD"
-          test -n "$API_ENCRYPTION_KEY"
-          test -n "$OTA_PASSWORD"
+          set -euo pipefail
+
+          : "${WIFI_SSID:?Missing GitHub secret WIFI_SSID}"
+          : "${WIFI_PASSWORD:?Missing GitHub secret WIFI_PASSWORD}"
+          : "${API_ENCRYPTION_KEY:?Missing GitHub secret API_ENCRYPTION_KEY}"
+          : "${OTA_PASSWORD:?Missing GitHub secret OTA_PASSWORD}"
 
           cat > devices/secrets.yaml <<SECRETS
           wifi_ssid: "$WIFI_SSID"
@@ -45,20 +59,28 @@ jobs:
 
       - name: Validate configs
         run: |
+          set -euo pipefail
+          shopt -s nullglob
           for cfg in devices/*.yaml; do
-            if [ "$cfg" = "devices/secrets.yaml" ] || [ "$cfg" = "devices/secrets.yaml.example" ]; then
-              continue
-            fi
+            case "$cfg" in
+              devices/secrets.yaml|devices/secrets.yaml.example) continue ;;
+            esac
             echo "Validating $cfg"
             python -m esphome config "$cfg"
           done
 
       - name: Compile configs
         run: |
+          set -euo pipefail
+          shopt -s nullglob
           for cfg in devices/*.yaml; do
-            if [ "$cfg" = "devices/secrets.yaml" ] || [ "$cfg" = "devices/secrets.yaml.example" ]; then
-              continue
-            fi
+            case "$cfg" in
+              devices/secrets.yaml|devices/secrets.yaml.example) continue ;;
+            esac
             echo "Compiling $cfg"
             python -m esphome compile "$cfg"
           done
+
+      - name: Cleanup generated secrets file
+        if: always()
+        run: rm -f devices/secrets.yaml
