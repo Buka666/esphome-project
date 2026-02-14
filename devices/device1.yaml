@@ -21,6 +21,7 @@ esp32:
 logger:
   level: DEBUG
 
+
 web_server:
   version: 3
 
