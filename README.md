@@ -50,6 +50,32 @@ ESPHome ищет `!secret` относительно **основного фай�
    python -m esphome compile devices/device1.yaml
    ```
 
+
+## Прошивка устройства
+
+### Первый запуск (через USB)
+
+1. Подключите ESP32-C3 SuperMini по USB.
+2. Узнайте порт устройства:
+   ```bash
+   python -m esphome logs devices/device1.yaml
+   ```
+   В выводе будет порт вида `/dev/ttyUSB0` или `/dev/ttyACM0` (Linux) / `COMx` (Windows).
+3. Прошейте устройство по USB:
+   ```bash
+   python -m esphome run devices/device1.yaml --device <PORT>
+   ```
+
+### Дальнейшие обновления
+
+- По USB (локально):
+  ```bash
+  python -m esphome upload devices/device1.yaml --device <PORT>
+  ```
+- По OTA из Home Assistant:
+  1. Нажмите кнопку `Check OTA Update`.
+  2. Если обновление найдено, нажмите `Install OTA Update`.
+
 ## GitHub Actions CI, версии и релизы
 
 Workflow: `.github/workflows/build.yml`.
