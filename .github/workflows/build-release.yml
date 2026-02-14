@@ -3,7 +3,7 @@ name: Build & Release ESPHome firmware
 on:
   push:
     tags:
-      - 'v*'   # запуск на тегах вида v1.0.0
+      - 'v*'   # запуск только на теги
 
 permissions:
   contents: write
@@ -14,28 +14,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Проверяем репо
+      # 1. Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Устанавливаем Python
+      # 2. Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3. Устанавливаем ESPHome
+      # 3. Install ESPHome
       - name: Install ESPHome
         run: |
           python -m pip install --upgrade pip
           pip install esphome==2026.1.5
 
-      # 4. Валидируем конфиг
+      # 4. Validate config
       - name: Validate device1.yaml
-        run: |
-          esphome config devices/device1.yaml
+        run: esphome config devices/device1.yaml
 
-      # 5. Компилируем прошивку
+      # 5. Compile firmware
       - name: Compile firmware
         run: |
           esphome compile devices/device1.yaml
@@ -43,9 +42,9 @@ jobs:
           cp .esphome/build/*/firmware.bin build/device1.bin
           ls -la build
 
-      # 6. Загружаем бинарник как артефакт
+      # 6. Upload artifact (обновлено на v4)
       - name: Upload firmware artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: firmware-device1
           path: build/device1.bin
