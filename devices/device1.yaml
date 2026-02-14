@@ -67,6 +67,10 @@ sensor:
   - platform: internal_temperature
     name: "${friendly_name} Internal Temperature"
 
+  - platform: wifi_signal
+    name: "${friendly_name} WiFi Signal"
+    update_interval: 30s
+
 text_sensor:
   - platform: template
     name: "${friendly_name} Firmware Version"
