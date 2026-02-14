@@ -1,4 +1,4 @@
 api:
   encryption:
-    key: !secret api_encryption_key
+    key: ${api_encryption_key}
   reboot_timeout: 15min
