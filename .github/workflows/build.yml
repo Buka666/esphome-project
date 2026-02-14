@@ -79,20 +79,32 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
+          compiled_any=0
           for cfg in devices/*.yaml; do
             case "$cfg" in
               devices/secrets.yaml|devices/secrets.yaml.example) continue ;;
             esac
+            compiled_any=1
             echo "Validating $cfg"
             python -m esphome config "$cfg"
             echo "Compiling $cfg"
             python -m esphome compile "$cfg"
           done
 
+          if [ "$compiled_any" -eq 0 ]; then
+            echo "No device configs found in devices/*.yaml (excluding secrets files)."
+            exit 1
+          fi
+
       - name: Collect firmware artifacts
         run: |
           set -euo pipefail
           mkdir -p dist
+
+          if [ ! -d build ]; then
+            echo "Build directory 'build/' was not created. Check compile step output above."
+            exit 1
+          fi
 
           mapfile -t bins < <(find build -type f \( -name "firmware.bin" -o -name "firmware*.bin" \))
           if [ ${#bins[@]} -eq 0 ]; then
