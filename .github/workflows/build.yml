@@ -114,10 +114,16 @@ jobs:
           fi
 
           for bin in "${bins[@]}"; do
-            rel="$bin"
-            rel="${rel#./}"
-            safe_name="${rel//\//-}"
-            target="dist/${safe_name}"
+            file_name="$(basename "$bin")"
+            env_name="$(basename "$(dirname "$bin")")"
+            short_name="${env_name}-${file_name}"
+            target="dist/${short_name}"
+
+            if [ -e "$target" ]; then
+              suffix="$(echo -n "$bin" | sha1sum | cut -c1-8)"
+              target="dist/${env_name}-${suffix}-${file_name}"
+            fi
+
             cp "$bin" "$target"
             echo "Collected $target"
           done
