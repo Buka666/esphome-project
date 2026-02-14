@@ -46,8 +46,6 @@ ESPHome ищет `!secret` относительно **основного фай�
    python -m esphome compile devices/device1.yaml
    ```
 
-
-
 ## GitHub Actions CI
 
 Для автоматической проверки и компиляции добавлен workflow: `.github/workflows/build.yml`.
@@ -59,5 +57,8 @@ ESPHome ищет `!secret` относительно **основного фай�
 - `API_ENCRYPTION_KEY`
 - `OTA_PASSWORD`
 
-Workflow создает `devices/secrets.yaml` из этих значений и выполняет `esphome config` + `esphome compile` для всех файлов устройств в `devices/*.yaml` (кроме файлов secrets).\n\nWorkflow запускается при изменениях в `devices/**`, `packages/**` и в самом `.github/workflows/build.yml`. В конце сборки временный `devices/secrets.yaml` удаляется.
+Workflow создает `devices/secrets.yaml` из этих значений и выполняет `esphome config` + `esphome compile`
+для всех файлов устройств в `devices/*.yaml` (кроме файлов secrets).
 
+Workflow запускается при изменениях в `devices/**`, `packages/**` и в самом `.github/workflows/build.yml`.
+В конце сборки временный `devices/secrets.yaml` удаляется.

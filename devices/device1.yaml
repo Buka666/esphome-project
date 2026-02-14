@@ -19,7 +19,9 @@ esp32:
     type: esp-idf
 
 logger:
-  level: DEBUG
+  level: WARN
+
+
 
 
 web_server:
