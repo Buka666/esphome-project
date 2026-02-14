@@ -15,6 +15,9 @@
 - Системный датчик статуса (`binary_sensor` platform `status`) для Home Assistant.
 - Веб-интерфейс ESPHome `web_server` версии 3.
 - OTA-обновление из GitHub Releases через `update` (`platform: http_request`).
+- Кнопки для OTA в Home Assistant:
+  - `Check OTA Update` — вручную проверяет наличие новой прошивки.
+  - `Install OTA Update` — запускает установку найденного обновления.
 
 > В `substitutions` задайте `github_repo` в формате `owner/repo` для OTA из GitHub Releases.
 

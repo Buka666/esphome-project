@@ -39,9 +39,22 @@ status_led:
     inverted: true
 
 update:
-  - platform: http_request
+  - id: firmware_update
+    platform: http_request
     name: "${friendly_name} Firmware"
     source: https://github.com/${github_repo}/releases/latest/download/${device_name}.bin
+
+button:
+  - platform: template
+    name: "${friendly_name} Check OTA Update"
+    on_press:
+      - component.update: firmware_update
+
+  - platform: template
+    name: "${friendly_name} Install OTA Update"
+    on_press:
+      - update.perform:
+          id: firmware_update
 
 sensor:
   - platform: internal_temperature
