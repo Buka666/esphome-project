@@ -2,7 +2,7 @@ substitutions:
   device_name: esp32c3-supermini-1
   friendly_name: ESP32C3 SuperMini 1
   status_led_pin: GPIO8
-  github_repo: your-org/your-repo
+  github_repo: esphome-project/esphome-project
 
   # secrets are resolved from the main device config location
   wifi_ssid: !secret wifi_ssid

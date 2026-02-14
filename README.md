@@ -19,7 +19,7 @@
   - `Check OTA Update` — вручную проверяет наличие новой прошивки.
   - `Install OTA Update` — запускает установку найденного обновления.
 
-> В `substitutions` задайте `github_repo` в формате `owner/repo` для OTA из GitHub Releases.
+> По умолчанию в `substitutions` уже указан `github_repo: esphome-project/esphome-project`. При форке замените на `owner/repo` вашего репозитория.
 
 ## Secrets без проблем с путями
 
