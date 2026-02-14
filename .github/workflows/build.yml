@@ -140,7 +140,7 @@ jobs:
               {
                 "chipFamily": "ESP32-C3",
                 "ota": {
-                  "path": "${name}.bin",
+                  "path": "https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/${name}.bin",
                   "md5": "$(md5sum "$bin" | cut -d" " -f1)",
                   "release_url": "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
                 }
@@ -173,6 +173,7 @@ jobs:
           tag_name: ${{ steps.version.outputs.version }}
           name: ${{ steps.version.outputs.version }}
           generate_release_notes: true
+          overwrite_files: true
           files: |
             dist/*.bin
             dist/*.json
