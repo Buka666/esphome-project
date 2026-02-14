@@ -1,4 +1,9 @@
+# ESPHome secrets
 esphome/secrets.yaml
+secrets.yaml
+devices/secrets.yaml
+
+# PlatformIO / Python / IDE
 .pio/
 __pycache__/
 *.bin
