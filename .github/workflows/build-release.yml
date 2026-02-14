@@ -34,21 +34,18 @@ jobs:
       - name: Validate device1.yaml
         run: esphome config devices/device1.yaml
 
-      # 5. Compile firmware
       - name: Compile firmware
         run: |
           esphome compile devices/device1.yaml
           mkdir -p build
-          # Копируем все бинарники (.bin) из текущей PlatformIO сборки
           cp .esphome/build/*/.pioenvs/*/*.bin build/
           ls -la build
 
-      # 6. Upload artifact (обновлено на v4)
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware-device1
-          path: build/device1.bin
+          path: build/*.bin
 
   release:
     name: Create GitHub Release
