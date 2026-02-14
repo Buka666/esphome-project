@@ -101,33 +101,16 @@ jobs:
           set -euo pipefail
           mkdir -p dist
 
-          search_roots=(build devices/build .esphome/build)
-          existing_roots=()
-          for root in "${search_roots[@]}"; do
-            if [ -d "$root" ]; then
-              existing_roots+=("$root")
-            fi
-          done
-
-          if [ ${#existing_roots[@]} -eq 0 ]; then
-            echo "No build directories found. Checked: ${search_roots[*]}"
-            echo "Check compile step output and esphome build_path settings."
-            exit 1
-          fi
-
           bins=()
-          for root in "${existing_roots[@]}"; do
-            while IFS= read -r -d '' bin; do
-              bins+=("$bin")
-            done < <(find "$root" -type f \( -name "firmware.bin" -o -name "firmware*.bin" \) -print0)
-          done
+          while IFS= read -r -d '' bin; do
+            bins+=("$bin")
+          done < <(find . -type f -name "firmware*.bin"             -not -path "./dist/*"             -not -path "./.git/*"             -print0)
 
           if [ ${#bins[@]} -eq 0 ]; then
-            echo "No firmware binaries were found under: ${existing_roots[*]}"
-            for root in "${existing_roots[@]}"; do
-              echo "--- files in $root (maxdepth 5) ---"
-              find "$root" -maxdepth 5 -type f | sed -n '1,200p' || true
-            done
+            echo "No firmware binaries were found in workspace after compile."
+            echo "Checked recursively from repository root (excluding dist/.git)."
+            echo "Top-level directories:"
+            find . -maxdepth 2 -type d | sed -n '1,200p'
             exit 1
           fi
 
