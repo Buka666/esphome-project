@@ -1,5 +1,5 @@
 esphome:
-  name: esp32c3_device1
+  name: esp32c3-device1
 
 esp32:
   board: esp32-c3-devkitm-1
