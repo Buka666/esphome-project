@@ -3,7 +3,7 @@ name: Build & Release ESPHome firmware
 on:
   push:
     tags:
-      - 'v*'   # запускается на теги вида v1.0.0
+      - 'v*'
 
 permissions:
   contents: write
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -30,44 +30,20 @@ jobs:
       - name: Validate device1.yaml
         run: esphome config devices/device1.yaml
 
-      - name: Compile firmware and collect binaries
+      - name: Compile firmware
         run: |
           set -euo pipefail
-
-          # Компиляция
           esphome compile devices/device1.yaml
-
-          # Подготовка каталога вывода
           mkdir -p build
-
-          # Ищем все .bin в дереве .esphome/build и копируем в build/
-          echo "Searching for .bin files under .esphome/build ..."
-          found=0
-          while IFS= read -r -d '' binfile; do
-            found=$((found+1))
-            dest="build/$(basename "$binfile")"
-            echo "Copying: $binfile -> $dest"
-            cp "$binfile" "$dest"
-          done < <(find .esphome/build -type f -name '*.bin' -print0)
-
-          if [ "$found" -eq 0 ]; then
-            echo "ERROR: no .bin files found in .esphome/build"
-            echo "Listing .esphome/build for debugging:"
-            find .esphome/build -maxdepth 6 -ls || true
-            # Выводим текущее дерево для отладки (полный)
-            echo "FULL TREE:"
-            find . -maxdepth 6 -ls || true
-            exit 1
-          fi
-
-          echo "Copied $found .bin file(s):"
+          echo "Copying OTA binary..."
+          cp devices/.esphome/build/esp32c3-device1/.pioenvs/esp32c3-device1/firmware.ota.bin build/device1.ota.bin
           ls -la build
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware-device1
-          path: build/*.bin
+          path: build/device1.ota.bin
 
   release:
     name: Create GitHub Release
@@ -92,6 +68,6 @@ jobs:
       - name: Create GitHub Release with firmware
         uses: softprops/action-gh-release@v2
         with:
-          files: build/*.bin
+          files: build/device1.ota.bin
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
