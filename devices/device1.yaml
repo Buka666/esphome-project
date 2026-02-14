@@ -2,6 +2,7 @@ substitutions:
   device_name: esp32c3-supermini-1
   friendly_name: ESP32C3 SuperMini 1
   status_led_pin: GPIO8
+  github_repo: your-org/your-repo
 
   # secrets are resolved from the main device config location
   wifi_ssid: !secret wifi_ssid
@@ -21,11 +22,11 @@ esp32:
 logger:
   level: WARN
 
-
-
-
 web_server:
   version: 3
+
+http_request:
+  verify_ssl: true
 
 packages:
   wifi: !include ../packages/connectivity/wifi.yaml
@@ -36,6 +37,11 @@ status_led:
   pin:
     number: ${status_led_pin}
     inverted: true
+
+update:
+  - platform: http_request
+    name: "${friendly_name} Firmware"
+    source: https://github.com/${github_repo}/releases/latest/download/${device_name}.bin
 
 sensor:
   - platform: internal_temperature
