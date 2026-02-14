@@ -1,4 +1,4 @@
-secrets.yaml
+esphome/secrets.yaml
 .pio/
 __pycache__/
 *.bin
