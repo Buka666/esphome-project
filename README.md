@@ -15,6 +15,7 @@
 - Системный датчик статуса (`binary_sensor` platform `status`) для Home Assistant.
 - Веб-интерфейс ESPHome `web_server` версии 3.
 - OTA-обновление из GitHub Releases через `update` (`platform: http_request`) по JSON-манифесту `${device_name}.json`.
+- Для стабильной загрузки манифеста с GitHub увеличены HTTP-буферы (`buffer_size_rx: 4096`, `buffer_size_tx: 1024`) и таймаут `10s`, чтобы избежать ошибки `Out of buffer` на ESP32-C3.
 - Кнопки для OTA в Home Assistant:
   - `Check OTA Update` — вручную проверяет наличие новой прошивки.
   - `Install OTA Update` — запускает установку найденного обновления.
