@@ -1,3 +1,5 @@
+# ESPHome secrets
+esphome/secrets.yaml
 secrets.yaml
 devices/secrets.yaml
 .pio/
