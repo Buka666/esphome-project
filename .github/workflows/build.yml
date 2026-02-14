@@ -85,9 +85,9 @@ jobs:
             esac
             compiled_any=1
             echo "Validating $cfg"
-            python -m esphome config "$cfg"
+            python -m esphome -s firmware_version "${ESPHOME_BUILD_VERSION}" config "$cfg"
             echo "Compiling $cfg"
-            python -m esphome compile "$cfg"
+            python -m esphome -s firmware_version "${ESPHOME_BUILD_VERSION}" compile "$cfg"
           done
 
           if [ "$compiled_any" -eq 0 ]; then
