@@ -65,7 +65,7 @@ Workflow: `.github/workflows/build.yml`.
    - для остальных запусков версия вида `0.0.<run_number>-<sha7>`.
 2. Создает `devices/secrets.yaml` из GitHub Secrets.
 3. Выполняет `esphome config` и `esphome compile` для всех файлов устройств в `devices/*.yaml` (кроме secrets).
-4. Рекурсивно собирает firmware-бинарники из `build/` в `dist/` и формирует JSON-манифесты для OTA.
+4. Рекурсивно собирает firmware-бинарники из `build/`, `devices/build/` и `.esphome/build/` в `dist/` и формирует JSON-манифесты для OTA.
 5. Публикует artifacts во всех запусках.
 6. На тегах `v*` создает GitHub Release и прикладывает `dist/*.bin` + `dist/*.json`.
 7. В конце удаляет временный `devices/secrets.yaml`.
