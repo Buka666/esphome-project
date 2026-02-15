@@ -3,9 +3,8 @@ name: ESPHome Build & Release
 on:
   push:
     branches:
-      - "**"
-    tags:
-      - "v*"
+      - "main"
+      - "master"
   pull_request:
     paths:
       - "devices/**"
