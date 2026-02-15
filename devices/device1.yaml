@@ -40,10 +40,15 @@ packages:
   api: !include ../packages/connectivity/api.yaml
   ota: !include ../packages/connectivity/ota.yaml
 
-status_led:
-  pin:
-    number: ${status_led_pin}
-    inverted: true
+//status_led:
+//  pin:
+//    number: ${status_led_pin}
+//    inverted: true
+
+light:
+  - platform: status_led
+    name: "Switch state"
+    pin: ${status_led_pin}
 
 update:
   - id: firmware_update
