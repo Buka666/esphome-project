@@ -6,6 +6,7 @@ on:
       - "main"
       - "master"
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - "devices/**"
       - "packages/**"
@@ -40,8 +41,17 @@ jobs:
           set -euo pipefail
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF_NAME}"
+          elif [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            VERSION="pr-${GITHUB_EVENT_NUMBER}-${GITHUB_SHA::7}"
           else
-            VERSION="v0.0.${GITHUB_RUN_NUMBER}"
+            last_tag="$(git tag -l 'v0.0.*' --sort=-v:refname | head -n1)"
+            if [[ -n "$last_tag" ]]; then
+              last_num="${last_tag#v0.0.}"
+              next_num=$((last_num + 1))
+            else
+              next_num=1
+            fi
+            VERSION="v0.0.${next_num}"
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "ESPHOME_BUILD_VERSION=${VERSION}" >> "$GITHUB_ENV"
@@ -114,11 +124,12 @@ jobs:
 
           for bin in "${bins[@]}"; do
             env_name="$(basename "$(dirname "$bin")")"
-            target="dist/${env_name}.bin"
+            file_name="$(basename "$bin")"
+            target="dist/${env_name}-${file_name}"
 
             if [ -e "$target" ]; then
               suffix="$(echo -n "$bin" | sha1sum | cut -c1-8)"
-              target="dist/${env_name}-${suffix}.bin"
+              target="dist/${env_name}-${suffix}-${file_name}"
             fi
 
             cp "$bin" "$target"
@@ -129,17 +140,33 @@ jobs:
         run: |
           set -euo pipefail
           shopt -s nullglob
-          for bin in dist/*.bin; do
-            name="$(basename "$bin" .bin)"
-            cat > "dist/${name}.json" <<JSON
+
+          mapfile -t factory_bins < <(find dist -maxdepth 1 -type f -name '*-firmware.factory.bin' | sort)
+          if [ ${#factory_bins[@]} -eq 0 ]; then
+            mapfile -t factory_bins < <(find dist -maxdepth 1 -type f -name '*-firmware.bin' | sort)
+          fi
+
+          if [ ${#factory_bins[@]} -eq 0 ]; then
+            echo "No firmware binaries suitable for OTA manifest were found in dist/."
+            exit 1
+          fi
+
+          for bin in "${factory_bins[@]}"; do
+            file_name="$(basename "$bin")"
+            env_name="${file_name%-firmware.factory.bin}"
+            if [[ "$env_name" == "$file_name" ]]; then
+              env_name="${file_name%-firmware.bin}"
+            fi
+
+            cat > "dist/${env_name}.json" <<JSON
           {
-            "name": "${name}",
+            "name": "${env_name}",
             "version": "${{ steps.version.outputs.version }}",
             "builds": [
               {
                 "chipFamily": "ESP32-C3",
                 "ota": {
-                  "path": "https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/${name}.bin",
+                  "path": "https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.version }}/${file_name}",
                   "md5": "$(md5sum "$bin" | cut -d" " -f1)",
                   "release_url": "https://github.com/${{ github.repository }}/releases/tag/${{ steps.version.outputs.version }}"
                 }
@@ -147,6 +174,7 @@ jobs:
             ]
           }
           JSON
+            echo "Generated manifest dist/${env_name}.json -> ${file_name}"
           done
 
       - name: Upload build artifacts
