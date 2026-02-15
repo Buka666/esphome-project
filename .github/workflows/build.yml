@@ -42,7 +42,7 @@ jobs:
           if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF_NAME}"
           else
-            VERSION="v0.0.${GITHUB_RUN_NUMBER}-${GITHUB_SHA::7}"
+            VERSION="v0.0.${GITHUB_RUN_NUMBER}"
           fi
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "ESPHOME_BUILD_VERSION=${VERSION}" >> "$GITHUB_ENV"
