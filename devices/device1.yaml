@@ -3,7 +3,7 @@ substitutions:
   friendly_name: ESP32C3 SuperMini 1
   status_led_pin: GPIO8
   github_repo: Buka666/esphome-project
-  firmware_version: "v1.0.0"
+  firmware_version: "v0.0.1"
 
   # secrets are resolved from the main device config location
   wifi_ssid: !secret wifi_ssid
