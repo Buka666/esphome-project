@@ -8,7 +8,7 @@ substitutions:
   # secrets are resolved from the main device config location
   wifi_ssid: !secret wifi_ssid
   wifi_password: !secret wifi_password
-  api_encryption_key: CnQ++9IPJ7fiYpAcYHlhwUOkymMn1qOn2MHVxXL9bw0=
+  api_encryption_key: !secret api_encryption_key
   ota_password: !secret ota_password
 
 esphome:
