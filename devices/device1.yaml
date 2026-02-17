@@ -8,7 +8,7 @@ substitutions:
   # secrets are resolved from the main device config location
   wifi_ssid: !secret wifi_ssid
   wifi_password: !secret wifi_password
-  api_encryption_key: !secret api_encryption_key
+  api_encryption_key: CnQ++9IPJ7fiYpAcYHlhwUOkymMn1qOn2MHVxXL9bw0=
   ota_password: !secret ota_password
 
 esphome:
@@ -85,7 +85,6 @@ text_sensor:
     entity_category: diagnostic
     lambda: |-
       return {"${firmware_version}"};
-    update_interval: never
 
 binary_sensor:
   - platform: status
