@@ -5,8 +5,16 @@ on:
     branches:
       - "main"
       - "master"
+    paths:
+      - "devices/**"
+      - "packages/**"
+      - ".github/workflows/build.yml"
+      - "README.md"
   pull_request:
     types: [opened, synchronize, reopened]
+    branches:
+      - "main"
+      - "master"
     paths:
       - "devices/**"
       - "packages/**"
