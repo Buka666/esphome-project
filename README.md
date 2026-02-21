@@ -28,7 +28,8 @@
 ## Что настроено в `device2.yaml`
 
 - Плата: `ESP32-C6 SuperMini` (`esp32-c6-devkitc-1`).
-- Кнопка на `GPIO9` и индикатор статуса (`status_led`) на `GPIO15`.
+- Имя устройства для OTA/артефактов: `esp32c6-supermini` (без суффикса `-1`).
+- Кнопка на `GPIO9`, индикатор статуса (`status_led`) на `GPIO15`, RGB LED (`ws2812`) на `GPIO8`.
 - OTA через GitHub Releases (`update` + кнопки `Check/Install OTA Update`).
 - Индикаторы в web/HA: версия прошивки и уровень Wi‑Fi.
 

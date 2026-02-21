@@ -1,7 +1,8 @@
 substitutions:
-  device_name: esp32c6-supermini-1
-  friendly_name: ESP32C6 SuperMini 1
+  device_name: esp32c6-supermini
+  friendly_name: ESP32C6 SuperMini
   status_led_pin: GPIO15
+  rgb_led_pin: GPIO8
   github_repo: Buka666/esphome-project
   firmware_version: "v1.0.0"
 
@@ -44,6 +45,15 @@ status_led:
   pin:
     number: ${status_led_pin}
     inverted: true
+
+light:
+  - platform: esp32_rmt_led_strip
+    name: "${friendly_name} RGB LED"
+    pin: ${rgb_led_pin}
+    num_leds: 1
+    rgb_order: GRB
+    chipset: ws2812
+    entity_category: config
 
 update:
   - id: firmware_update
