@@ -4,12 +4,13 @@
 
 ## Структура
 
-- `devices/` — конфигурации отдельных устройств (`device1.yaml` для ESP32-C3 и `device2.yaml` для ESP32-C6 SuperMini).
+- `devices/` — конфигурации отдельных устройств (`device1.yaml` для ESP32-C3 SuperMini и `device2.yaml` для ESP32-C6 SuperMini).
 - `packages/connectivity/` — общие пакеты для Wi‑Fi, API и OTA.
 
 ## Что настроено в `device1.yaml`
 
 - Плата: `ESP32-C3 SuperMini` (`esp32-c3-devkitm-1`).
+- Имя устройства для OTA/артефактов: `esp32c3-supermini` (без суффикса `-1`).
 - Кнопка на `GPIO9`.
 - Индикатор статуса (`status_led`) на встроенном LED `GPIO8`.
 - Системный датчик статуса (`binary_sensor` platform `status`) для Home Assistant.
@@ -58,7 +59,7 @@ ESPHome ищет `!secret` относительно основного файл�
    python -m esphome config devices/device1.yaml
    python -m esphome config devices/device2.yaml
    ```
-3. Версия прошивки по умолчанию задана как `v1.0.0` в `devices/device1.yaml` и `devices/device2.yaml` -> `substitutions.firmware_version` (эта версия отображается в `Firmware Version`).
+3. Версия прошивки по умолчанию задана как `v1.0.0` в `devices/device1.yaml` и `devices/device2.yaml` -> `substitutions.firmware_version` (эта версия отображается в `Firmware Version`). В CI для обеих прошивок она автоматически подставляется из шага version через `-s firmware_version "${ESPHOME_BUILD_VERSION}"`.
 4. Для локальной сборки при необходимости переопределите версию через `-s firmware_version <version>`.
 5. Скомпилируйте прошивку:
    ```bash
